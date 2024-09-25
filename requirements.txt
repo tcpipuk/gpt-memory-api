@@ -1,0 +1,5 @@
+aiohttp
+langchain
+openai
+redis
+uvicorn[standard]
