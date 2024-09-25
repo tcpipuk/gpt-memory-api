@@ -31,9 +31,8 @@ a GPT model using the embeddings for enhanced context.
 
 ### Prerequisites
 
-- Docker
-- Docker Compose
-- OpenAI API key ([sign up here](https://openai.com/))
+- [Docker](https://docs.docker.com/engine/install/)
+- [OpenAI API key](https://platform.openai.com/docs/quickstart)
 
 ### Installation
 
