@@ -134,4 +134,4 @@ a GPT model using the embeddings for enhanced context.
 
 ## Licence
 
-Licensed under the GNU General Public Licence v3.0. See the [LICENCE](LICENCE) file.
+Licensed under the GNU General Public Licence v3.0. See the [LICENCE](./LICENCE) file.
