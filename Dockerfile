@@ -12,7 +12,7 @@ RUN pip install --no-cache-dir uv
 COPY requirements.txt /tmp/requirements.txt
 
 # Install dependencies into a directory using uv pip
-RUN uv pip install --prefix=/install -r /tmp/requirements.txt
+RUN uv pip install --system --prefix=/install -r /tmp/requirements.txt
 
 # Stage 2: Final Image
 FROM python:3.12-alpine
