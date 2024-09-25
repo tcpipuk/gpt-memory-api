@@ -12,8 +12,6 @@ A simple REST API for GPT responses using embeddings backed by a Redis database.
    2. [Example Requests](#example-requests)
 5. [Configuration](#configuration)
 6. [Licence](#licence)
-7. [Acknowledgements](#acknowledgements)
-8. [Contact](#contact)
 
 ## Overview
 
@@ -137,14 +135,3 @@ a GPT model using the embeddings for enhanced context.
 ## Licence
 
 Licensed under the GNU General Public Licence v3.0. See the [LICENCE](LICENCE) file.
-
-## Acknowledgements
-
-- **OpenAI** for GPT models.
-- **LangChain** for model chaining.
-- **Redis** for data storage.
-- **Docker** for containerisation.
-
-## Contact
-
-For support, open an issue on [GitHub](https://github.com/tcpipuk/gpt-memory-api).
