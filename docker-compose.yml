@@ -1,0 +1,37 @@
+services:
+    app:
+        build: .
+        ports:
+            - "8080:8080"
+        environment:
+            - OPENAI_API_KEY=${OPENAI_API_KEY}
+            - REDIS_SOCKET_PATH=/sockets/redis.sock
+        depends_on:
+            - redis
+        env_file:
+            - .env
+        volumes:
+            - sockets:/sockets
+
+    redis:
+        image: redis:alpine
+        volumes:
+            - ./data:/data
+            - ./redis.conf:/usr/local/etc/redis/redis.conf
+            - sockets:/sockets
+        command:
+            [
+                "redis-server",
+                "/usr/local/etc/redis/redis.conf",
+                "--unixsocket",
+                "/sockets/redis.sock",
+                "--unixsocketperm",
+                "777",
+            ]
+
+volumes:
+    sockets:
+        driver: local
+        driver_opts:
+            type: tmpfs
+            device: tmpfs
