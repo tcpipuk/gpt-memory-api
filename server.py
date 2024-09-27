@@ -3,8 +3,8 @@ gpt-memory-api
 
 A simple REST API for GPT responses using embeddings backed by a Redis database.
 
-This API allows users to ingest text data to generate embeddings and store them in a Redis Vector Store.
-It also provides a chat interface where the GPT model can answer queries using the stored embeddings for context.
+Allows users to ingest text data to generate embeddings and store them in a Redis Vector Store, and
+provides a interface where the GPT model can answer queries using the stored embeddings for context.
 
 Endpoints:
 /ingest   - POST: Ingest text data for embeddings.
@@ -16,13 +16,12 @@ The application uses aiohttp for the web server and can be run inside a Docker c
 
 import os
 import asyncio
+from typing import Optional
 from aiohttp import web
 import redis
-import openai
-from langchain.embeddings import OpenAIEmbeddings
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import Redis as RedisVectorStore
-from langchain.chat_models import ChatOpenAI
 from langchain.schema import HumanMessage, SystemMessage, AIMessage
 from langchain.docstore.document import Document
 
@@ -34,7 +33,13 @@ class GPTMemory:
     A helper class that uses LangChain to generate embeddings and answer queries using GPT models.
     """
 
-    def __init__(self, redis_socket_path: str, openai_api_key: str):
+    def __init__(
+        self,
+        redis_socket_path: str,
+        chat_temperature: float = 0.6,
+        chat_max_tokens: int = 1000,
+        chat_uri: Optional[str] = None,
+    ):
         """
         Initialize the GPTMemory class.
 
@@ -43,14 +48,17 @@ class GPTMemory:
             openai_api_key (str): Your OpenAI API key.
         """
         self.redis_socket_path = redis_socket_path
-        os.environ["OPENAI_API_KEY"] = openai_api_key
-        openai.api_key = openai_api_key
 
         # Initialize embeddings
         self.embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
 
         # Initialize Chat LLM
-        self.llm = ChatOpenAI(model_name="gpt-4o-mini")
+        self.llm = ChatOpenAI(
+            model="gpt-4o-mini",
+            temperature=chat_temperature,
+            max_tokens=chat_max_tokens,
+            base_url=chat_uri,
+        )
 
         # Initialize Redis client
         self.redis_client = redis.Redis(unix_socket_path=redis_socket_path)
@@ -140,7 +148,9 @@ class GPTMemory:
         lc_messages.append(HumanMessage(content=modified_message))
 
         # Generate the response using the ChatOpenAI model
-        assistant_reply = self.llm(lc_messages).content
+        assistant_reply = self.llm.invoke(input=lc_messages).content
+
+        assert isinstance(assistant_reply, str), "The response from the model is not a string"
 
         return assistant_reply
 
@@ -181,7 +191,6 @@ async def create_app():
     # Initialize the GPTMemory helper
     gpt_memory = GPTMemory(
         redis_socket_path=os.environ.get("REDIS_SOCKET_PATH", "/redis_socket/redis.sock"),
-        openai_api_key=os.environ.get("OPENAI_API_KEY", ""),
     )
 
     app["gpt_memory"] = gpt_memory

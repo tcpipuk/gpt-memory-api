@@ -1,5 +1,6 @@
 aiohttp
 langchain
+langchain-openai
 openai
 redis
 uvicorn[standard]
